@@ -6,9 +6,9 @@ Simple to do list with unit testing using Microsoft SQL Server, Nancy 1.3.0, XUn
 ###Instructions
 Download source code and run from the project folder
 
-  dnvm install latest
-  dnu restore
-  dnx kestrel
+  `> dnvm install latest`
+  `> dnu restore`
+  `> dnx kestrel`
 
 App production database named `todo` created using these commands in PowerShell **SQLCMD**
 
