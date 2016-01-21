@@ -1,17 +1,30 @@
 using Xunit;
 using System.Collections.Generic;
 using System;
+using System.Data;
+using System.Data.SqlClient;
+using Xunit.Abstractions;
 
 namespace ToDoList
 {
+
   public class ToDoTest : IDisposable
   {
+    private readonly ITestOutputHelper output;
+
+    public ToDoTest(ITestOutputHelper output)
+    {
+      DBConfiguration.connectionString = "Data Source=(localdb)\\mssqllocaldb;Initial Catalog=todo_test;Integrated Security=SSPI;";
+      this.output = output;
+        Console.WriteLine(DB.Connection());
+    }
+``
     [Fact]
-    public void Test_GetAll()
+    public void Test_All()
     {
       //Arrange
       var description = "Wash the dog";
-      var description2 = "Water the plants";
+      var description2 = "Do the dishes";
       Task testTask = new Task(description);
       testTask.Save();
       Task testTask2 = new Task(description2);
@@ -21,65 +34,11 @@ namespace ToDoList
       List<Task> result = Task.All();
       List<Task> testList = new List<Task>{testTask, testTask2};
 
-      //debugging
-      string descriptionString1 = "";
-      foreach (Task thisTask in result ){
-        descriptionString1 += thisTask.GetId();
-      }
-      Console.WriteLine("descriptionstring1: " + descriptionString1);
-
-      string descriptionstring2 = "";
-      foreach (Task thisTask in testList ){
-        descriptionstring2 += thisTask.GetId();
-      }
-      Console.WriteLine("descriptionstring2: " + descriptionstring2);
-
       //Assert
-      Assert.Equal(testList, result);
+      Assert.Equal(result, testList);
     }
 
-    [Fact]
-    public void Test_GetAll2()
-    {
-      //Arrange
-      var description = "Wash the dog";
-      var description2 = "Water the plants";
-      var description3 = "Sweep the floor";
-      Task testTask = new Task(description);
-      testTask.Save();
-      Task testTask2 = new Task(description2);
-      testTask2.Save();
-      Task testTask3 = new Task(description3);
-      testTask3.Save();
 
-
-      //Act
-      List<Task> result = Task.All();
-      List<Task> testList = new List<Task>{testTask, testTask2, testTask3};
-
-      //debugging
-      string descriptionString1 = "";
-      foreach (Task thisTask in result ){
-        descriptionString1 += thisTask.GetId();
-      }
-      Console.WriteLine("descriptionstring1: " + descriptionString1);
-
-      string descriptionstring2 = "";
-      foreach (Task thisTask in testList ){
-        descriptionstring2 += thisTask.GetId();
-      }
-      Console.WriteLine("descriptionstring2: " + descriptionstring2);
-
-      string descriptionstring3 = "";
-      foreach (Task thisTask in testList ){
-        descriptionstring3 += thisTask.GetId();
-      }
-      Console.WriteLine("descriptionstring3: " + descriptionstring3);
-
-
-      //Assert
-      Assert.Equal(testList, result);
-    }
 
     public void Dispose()
       {

@@ -13,6 +13,7 @@ namespace ToDoList
     {
         public void Configure(IApplicationBuilder app)
         {
+
             app.UseOwin(x => x.UseNancy());
         }
     }
@@ -42,22 +43,8 @@ namespace ToDoList
         }
     }
 
-    // public class DB
-    // {
-    //   public static SqlConnection Connection()
-    //   {
-    //     SqlConnection conn = new SqlConnection("Data Source=(localdb)\\mssqllocaldb;Initial Catalog=todo;Integrated Security=SSPI;");
-    //     return conn;
-    //   }
-    //
-    // }
-    public class DB
+    public static class DBConfiguration
     {
-      public static SqlConnection Connection()
-      {
-        SqlConnection conn = new SqlConnection("Data Source=(localdb)\\mssqllocaldb;Initial Catalog=todo_test;Integrated Security=SSPI;");
-        return conn;
-      }
-
+        public static string connectionString = "Data Source=(localdb)\\mssqllocaldb;Initial Catalog=todo;Integrated Security=SSPI;";
     }
 }
