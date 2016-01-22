@@ -20,9 +20,12 @@ namespace ToDoList
         if (!(otherTask is Task))
         {
           return false;
-        } else {
+        }
+        else {
           Task newTask = (Task) otherTask;
-          return this.GetDescription().Equals(newTask.GetDescription());
+          bool idEquality = this.GetId() == newTask.GetId();
+          bool descriptionEquality = this.GetDescription() == newTask.GetDescription();
+          return (idEquality && descriptionEquality);
         }
     }
 
@@ -57,9 +60,14 @@ namespace ToDoList
         Task newTask = new Task(taskDescription, taskId);
         AllTasks.Add(newTask);
       }
-
-      conn.Close();
-
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
       return AllTasks;
     }
     public void Save()
@@ -70,17 +78,24 @@ namespace ToDoList
 
       SqlCommand cmd = new SqlCommand("INSERT INTO tasks (description) OUTPUT INSERTED.id VALUES (@TaskDescription)", conn);
 
-      SqlParameter testParameter = new SqlParameter();
-      testParameter.ParameterName = "@TaskDescription";
-      testParameter.Value = this.GetDescription();
-      cmd.Parameters.Add(testParameter);
+      SqlParameter param = new SqlParameter();
+      param.ParameterName = "@TaskDescription";
+      param.Value = this.GetDescription();
+      cmd.Parameters.Add(param);
       rdr = cmd.ExecuteReader();
 
       while(rdr.Read())
       {
         this.id = rdr.GetInt32(0);
       }
-      conn.Close();
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
     }
 
     public static void DeleteAll()
@@ -90,5 +105,45 @@ namespace ToDoList
       SqlCommand cmd = new SqlCommand("DELETE FROM tasks;", conn);
       cmd.ExecuteNonQuery();
     }
+
+    public static Task Find(int id)
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr = null;
+
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM tasks WHERE id = @TaskId", conn);
+
+      SqlParameter taskIdParameter = new SqlParameter();
+      taskIdParameter.ParameterName = "@TaskId";
+      taskIdParameter.Value = id.ToString();
+      cmd.Parameters.Add(taskIdParameter);
+      rdr = cmd.ExecuteReader();
+
+      int foundTaskId = 0;
+      string foundTaskDescription = "null";
+
+      while(rdr.Read())
+      {
+        foundTaskId = rdr.GetInt32(0);
+        foundTaskDescription = rdr.GetString(1);
+      }
+      Task foundTask = new Task(foundTaskDescription, foundTaskId);
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      Console.WriteLine(foundTask);
+      return foundTask;
+
+    }
+
+
   }
 }
